@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"github.com/testing/example/handler"
+	"github.com/testing/example/model"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -17,7 +18,7 @@ type userPreferenceServiceStub struct {
 	ReturnError error
 }
 
-func (u *userPreferenceServiceStub) Save(ctx context.Context, userID string, preferences interface{}) (err error) {
+func (u *userPreferenceServiceStub) Save(ctx context.Context, userID string, preferences model.UserPreferences) (err error) {
 	return u.ReturnError
 }
 

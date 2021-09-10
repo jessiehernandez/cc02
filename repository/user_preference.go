@@ -6,13 +6,15 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
+	"github.com/testing/example/model"
 )
 
 type UserPreference struct {
 	db *sql.DB
 }
 
-func (r *UserPreference) Save(ctx context.Context, userID string, preferences interface{}) (err error) {
+func (r *UserPreference) Save(ctx context.Context, userID string, preferences model.UserPreferences) (err error) {
 	var preferenceBytes []byte
 
 	if preferenceBytes, err = json.Marshal(preferences); err != nil {

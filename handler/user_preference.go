@@ -5,15 +5,17 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/testing/example/model"
 )
 
 type postBody struct {
-	Preferences map[string]interface{} `json:"preferences"`
-	UserID      string                 `json:"userID"`
+	Preferences model.UserPreferences `json:"preferences"`
+	UserID      string                `json:"userID"`
 }
 
 type UserPreferenceService interface {
-	Save(ctx context.Context, userID string, preferences interface{}) (err error)
+	Save(ctx context.Context, userID string, preferences model.UserPreferences) (err error)
 }
 
 type UserPreference struct {

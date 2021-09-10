@@ -5,6 +5,7 @@ import (
 	"database/sql"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
+	"github.com/testing/example/model"
 	"github.com/testing/example/repository"
 
 	. "github.com/onsi/ginkgo"
@@ -37,18 +38,21 @@ var _ = Describe("User Preference Repository", func() {
 	})
 
 	Context("Saving a user's preferences", func() {
-		When("the preferences are in an invalid format", func() {
-			It("returns an error", func() {
-				err = repo.Save(ctx, "user1", func() {})
+		// When("the preferences are in an invalid format", func() {
+		// 	It("returns an error", func() {
+		// 		err = repo.Save(ctx, "user1", func() {})
 
-				Expect(err).ToNot(BeNil())
-				Expect(err.Error()).To(ContainSubstring("preferences passed in an invalid format"))
-			})
-		})
+		// 		Expect(err).ToNot(BeNil())
+		// 		Expect(err.Error()).To(ContainSubstring("preferences passed in an invalid format"))
+		// 	})
+		// })
 
 		When("the preferences are saved successfully", func() {
 			It("stores the preferences in the database", func() {
-				err = repo.Save(ctx, "user1", map[string]string{"foo": "bar"})
+				err = repo.Save(ctx, "user1", model.UserPreferences{
+					Locale:   "en",
+					Timezone: "CST",
+				})
 
 				Expect(err).To(BeNil())
 			})
@@ -57,7 +61,10 @@ var _ = Describe("User Preference Repository", func() {
 		When("there is an error saving the preferences", func() {
 			It("returns an error", func() {
 				db.ExecContext(ctx, `ALTER TABLE example.user_preference RENAME TO user_preference_bak`)
-				err = repo.Save(ctx, "user1", nil)
+				err = repo.Save(ctx, "user1", model.UserPreferences{
+					Locale:   "en",
+					Timezone: "CST",
+				})
 
 				Expect(err).ToNot(BeNil())
 			})

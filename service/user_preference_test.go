@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/testing/example/model"
 	"github.com/testing/example/service"
 
 	. "github.com/onsi/ginkgo"
@@ -14,7 +15,7 @@ type userPreferenceRepositoryStub struct {
 	ReturnError error
 }
 
-func (u *userPreferenceRepositoryStub) Save(ctx context.Context, userID string, preferences interface{}) (err error) {
+func (u *userPreferenceRepositoryStub) Save(ctx context.Context, userID string, preferences model.UserPreferences) (err error) {
 	return u.ReturnError
 }
 
@@ -24,7 +25,10 @@ var _ = Describe("User Preference Service", func() {
 	When("the preferences are successfully saved", func() {
 		It("returns success", func() {
 			srv := service.NewUserPreference(&userPreferenceRepositoryStub{})
-			err := srv.Save(ctx, "foo", map[string]string{"foo": "bar"})
+			err := srv.Save(ctx, "foo", model.UserPreferences{
+				Locale:   "en",
+				Timezone: "CST",
+			})
 
 			Expect(err).To(BeNil())
 		})
@@ -35,7 +39,10 @@ var _ = Describe("User Preference Service", func() {
 			srv := service.NewUserPreference(&userPreferenceRepositoryStub{
 				ReturnError: errors.New("mock error"),
 			})
-			err := srv.Save(ctx, "foo", map[string]string{"foo": "bar"})
+			err := srv.Save(ctx, "foo", model.UserPreferences{
+				Locale:   "en",
+				Timezone: "CST",
+			})
 
 			Expect(err).ToNot(BeNil())
 			Expect(err.Error()).To(ContainSubstring("mock error"))
