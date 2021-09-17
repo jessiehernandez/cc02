@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"errors"
 
 	_ "github.com/jackc/pgx/v4/stdlib"
 	"github.com/testing/example/model"
@@ -38,14 +39,17 @@ var _ = Describe("User Preference Repository", func() {
 	})
 
 	Context("Saving a user's preferences", func() {
-		// When("the preferences are in an invalid format", func() {
-		// 	It("returns an error", func() {
-		// 		err = repo.Save(ctx, "user1", func() {})
+		When("the preferences are in an invalid format", func() {
+			It("returns an error", func() {
+				repo.JSONMarshaler = func(v interface{}) ([]byte, error) {
+					return []byte{}, errors.New("marshal error")
+				}
+				err = repo.Save(ctx, "user1", model.UserPreferences{})
 
-		// 		Expect(err).ToNot(BeNil())
-		// 		Expect(err.Error()).To(ContainSubstring("preferences passed in an invalid format"))
-		// 	})
-		// })
+				Expect(err).ToNot(BeNil())
+				Expect(err.Error()).To(ContainSubstring("preferences passed in an invalid format"))
+			})
+		})
 
 		When("the preferences are saved successfully", func() {
 			It("stores the preferences in the database", func() {

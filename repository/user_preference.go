@@ -11,13 +11,14 @@ import (
 )
 
 type UserPreference struct {
-	db *sql.DB
+	db            *sql.DB
+	JSONMarshaler func(v interface{}) ([]byte, error)
 }
 
 func (r *UserPreference) Save(ctx context.Context, userID string, preferences model.UserPreferences) (err error) {
 	var preferenceBytes []byte
 
-	if preferenceBytes, err = json.Marshal(preferences); err != nil {
+	if preferenceBytes, err = r.JSONMarshaler(preferences); err != nil {
 		return fmt.Errorf("preferences passed in an invalid format: %v", err)
 	}
 
@@ -43,6 +44,7 @@ func (r *UserPreference) Save(ctx context.Context, userID string, preferences mo
 
 func NewUserPreference(db *sql.DB) *UserPreference {
 	return &UserPreference{
-		db: db,
+		db:            db,
+		JSONMarshaler: json.Marshal,
 	}
 }
